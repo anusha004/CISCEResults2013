@@ -20,12 +20,20 @@ score_path = "/html/body/div[2]/div/center/table/tr[position()>1]"
 
 codes = [17,18,19,26,27,28,29,36,37,38,39,46,47,48,49,56,57,58,59,66,67,68,69,76,77,78,79,91,92,93,94,95,96,97,98,99]
 
+max_fails = 5
+
 codes.each do |code|
+
+  fails = 0
 
   students = CSV.open("#{code}/cbse_students#{instance}.csv","w")
   scores = CSV.open("#{code}/cbse_scores#{instance}.csv","w")
 
-  (((instance-1)*1000+1)..(instance*1000)).each do |post_id|
+  (((instance-1)*1000)..(instance*1000)).each do |post_id|
+
+    if (fails>max_fails)
+      break
+    end
 
     if (post_id%100==0)
       print "  #{code} - #{post_id}\n"
@@ -55,8 +63,10 @@ codes.each do |code|
       row << td.text.delete("^\u{0000}-\u{007F}").strip
     end
     if (row.size>0)
+      fails = 0
       students << row
     else
+      fails += 1
       next
     end
 
