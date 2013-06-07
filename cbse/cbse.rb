@@ -16,9 +16,7 @@ instance = ARGV[0].to_i
 student_path = "/html/body/div[2]/table[2]/tr[position()>=1 and position()<=4]/td[2]"
 score_path = "/html/body/div[2]/div/center/table/tr[position()>1]"
 
-#codes = [16,17,18,19,26,27,28,29,36,37,38,39,46,47,48,49,56,57,58,59,66,67,68,69,76,77,78,79,91,92,93,94,95,96,97,98,99]
-
-codes = [17,18,19,26,27,28,29,36,37,38,39,46,47,48,49,56,57,58,59,66,67,68,69,76,77,78,79,91,92,93,94,95,96,97,98,99]
+codes = [16,17,18,19,26,27,28,29,36,37,38,39,46,47,48,49,56,57,58,59,66,67,68,69,76,77,78,79,91,92,93,94,95,96,97,98,99]
 
 max_fails = 5
 
@@ -29,7 +27,9 @@ codes.each do |code|
   students = CSV.open("#{code}/cbse_students#{instance}.csv","w")
   scores = CSV.open("#{code}/cbse_scores#{instance}.csv","w")
 
-  (((instance-1)*1000)..(instance*1000)).each do |post_id|
+  (((instance-1)*1000)..(instance*1000-1)).each do |post_id|
+
+    add_sub = false
 
     if (fails>max_fails)
       break
@@ -79,7 +79,14 @@ codes.each do |code|
       tr.xpath("td[position()>=1 and position()<=4]").each do |td|
         row << td.text.delete("^\u{0000}-\u{007F}").strip
       end
-      scores << row
+      row << add_sub
+      if (row[1]=='Additional Subject')
+        add_sub=TRUE
+        #scores << row
+        next
+      else
+        scores << row
+      end
     end
   end
 
